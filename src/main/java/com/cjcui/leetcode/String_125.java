@@ -1,5 +1,8 @@
 package com.cjcui.leetcode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class String_125 {
     public static void main(String[] args) {
         String s = "d" + 1;
@@ -16,6 +19,9 @@ public class String_125 {
         System.out.println('\0');
         System.out.println("\0");
         System.out.println(p);
+        boolean isomorphic = new String_125().isIsomorphic("paper", "title");
+//        boolean isomorphic = new String_125().isIsomorphic("badc", "baba");
+        System.out.println(isomorphic);
     }
 
     public boolean isP(String s) {
@@ -42,6 +48,38 @@ public class String_125 {
 
             } else {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        char[] chars1 = s.toCharArray();
+        char[] chars2 = t.toCharArray();
+        Map<Character, Character> map = new HashMap<>(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            if (map.containsKey(chars1[i])) {
+                if (map.get(chars1[i]) == chars2[i]) {
+
+                } else {
+                    return false;
+                }
+            } else {
+                if (map.containsValue(chars2[i])) {
+                    for (Map.Entry<Character, Character> entry : map.entrySet()) {
+                        if (entry.getValue() == chars2[i]) {
+                            if (entry.getKey() == chars1[i]) {
+
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                map.put(chars1[i], chars2[i]);
             }
         }
         return true;
