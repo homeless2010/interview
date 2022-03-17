@@ -22,6 +22,7 @@ public class String_125 {
         boolean isomorphic = new String_125().isIsomorphic("paper", "title");
 //        boolean isomorphic = new String_125().isIsomorphic("badc", "baba");
         System.out.println(isomorphic);
+        System.out.println(null == null);
     }
 
     public boolean isP(String s) {
