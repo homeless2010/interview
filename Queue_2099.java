@@ -9,7 +9,7 @@ public class Queue_2099 {
         int[][] arr = new int[nums.length][2];
         for (int i = 0; i < nums.length; i++) {
             arr[i][0] = i;
-            arr[i][0] = nums[i];
+            arr[i][1] = nums[i];
         }
         Arrays.sort(arr, (x, y) -> y[1] - x[1]);
         Arrays.sort(arr, Comparator.comparingInt(x -> x[0]));
