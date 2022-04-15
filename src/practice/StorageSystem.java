@@ -34,8 +34,8 @@ public class StorageSystem {
     private int normalStoragePrice;
     private int delay;
     //存储单子
-    private Map<Integer, List<Receipt>> coldStorageList = new HashMap<>();
-    private Map<Integer, List<Receipt>> normalStorageList = new HashMap<>();
+    private Map<Integer, Receipt> coldStorageList = new HashMap<>();
+    private Map<Integer, Receipt> normalStorageList = new HashMap<>();
     //操作单数
     private Map<Integer, Integer> receiptOPnum = new HashMap<>();
 
@@ -49,6 +49,18 @@ public class StorageSystem {
 
     //在日期 date 为存单 storageId 租赁 storageType 类型的一个储藏室，并存放物品 storageDays 天。
     int store(int date, int storageId, int storageType, int storageDays) {
+        expired(date);
+        Receipt r = new Receipt(date, storageId, storageType, storageDays);
+        if (coldStorageList.size() < coldStorageNum) {
+
+        } else {
+            return -1;
+        }
+        if (storageType == 0) {
+            coldStorageList.put(storageId, r);
+        } else {
+            normalStorageList.put(storageId, r);
+        }
         return storageType * storageDays;
     }
 
@@ -66,7 +78,27 @@ public class StorageSystem {
 //在日期 date ，客户取出存单 storageId （存单一定存在且未被提取）对应的物品：
     int retrieve(int date, int storageId) {
         expired(date);
+        if (coldStorageList.containsKey(storageId)) {
 
+        } else {
+            return -1;
+        }
+        if (normalStorageList.containsKey(storageId)) {
+
+        } else {
+            return -1;
+        }
+        Receipt coldReceipt = coldStorageList.get(storageId);
+        coldStorageList.remove(storageId);
+        if (date > coldReceipt.getDate() + coldReceipt.getStorageDays()) {
+            return (date - (coldReceipt.getDate() + coldReceipt.getStorageDays())) * this.coldStoragePrice;
+        }
+        Receipt normalReceipt = normalStorageList.get(storageId);
+        normalStorageList.remove(storageId);
+        if (date > normalReceipt.getDate() + normalReceipt.getStorageDays()) {
+            return (date - (normalReceipt.getDate() + normalReceipt.getStorageDays())) * this.normalStoragePrice;
+        }
+        return 0;
     }
 
     /**
@@ -90,6 +122,15 @@ public class StorageSystem {
     }
 
     void expired(int date) {
+        List<Integer> removeKeys = new ArrayList<>();
+        for (Map.Entry<Integer, Receipt> receiptEntry : coldStorageList.entrySet()) {
+            if (date > (receiptEntry.getValue().getDate() + receiptEntry.getValue().getStorageDays() + this.delay)) {
+                removeKeys.add(receiptEntry.getKey());
+            }
+        }
+        for (int i = 0; i < removeKeys.size(); i++) {
+            coldStorageList.remove(removeKeys.get(i));
+        }
 //        List<Receipt> coldReceipts = coldStorageList.get(date);
 ////        List<Integer> coldExpired = coldReceipts.stream().filter(r -> date > r.getDate() + r.getStorageDays() + delay)
 ////                .mapToInt(r -> r.getStorageId()).boxed().collect(Collectors.toList());
@@ -105,7 +146,6 @@ public class StorageSystem {
 //        normalReceipts.removeAll(normalExpired);
 //        receiptOPnum.put(2, receiptOPnum.get(2) == null ? normalReceipts.size() : receiptOPnum.get(2) + normalReceipts.size());
     }
-
 }
 
 
