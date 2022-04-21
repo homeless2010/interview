@@ -2,6 +2,7 @@ package com;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Scanner;
 
 /**
  * 排序字段
@@ -49,8 +50,16 @@ public class Chart {
     private static final int MAX_LENGTH = 20;
 
     public static void main(String[] args) {
-        String[] data = {"apple 5", "pen 3", "pineapple 10"};
-        new Chart().chart(3, "Value DESC", data);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("请输入：");
+        Integer row = Integer.parseInt(scanner.nextLine());
+        String sort = scanner.nextLine();
+        String[] data = new String[row];
+        for (int i = 0; i < row; i++) {
+            data[i] = scanner.nextLine();
+        }
+        scanner.close();
+        new Chart().chart(row, sort, data);
     }
 
     /**
@@ -70,9 +79,13 @@ public class Chart {
     public void chart(int row, String sort, String[] data) {
         //name最大长度
         int namemaxLength = 0;
+        //value最大
+        int maxValue = 0;
         for (int i = 0; i < data.length; i++) {
             namemaxLength = Math.max(namemaxLength, data[i].split(SPACE)[0].length());
+            maxValue = Math.max(maxValue, Integer.parseInt(data[i].split(SPACE)[1]));
         }
+        //排序
         String[] sorts = sort.split(SPACE);
         if (SortField.VALUE.getField().equals(sorts[0])) {
             if (SortType.DESC.getType().equals(sorts[1])) {
@@ -87,6 +100,7 @@ public class Chart {
                 Arrays.sort(data, Comparator.comparingInt(d -> d.split(SPACE)[0].length()));
             }
         }
+        //行边框
         for (int i = 0; i < row + 1; i++) {
             if (i == 0) {
                 System.out.print(BORDER[0]);
@@ -113,6 +127,7 @@ public class Chart {
             } else {
                 System.out.print(CROSS[1]);
             }
+            //行内容
             if (i < row) {
                 System.out.println();
                 System.out.print(HORIZONTAL_VERTICAL[1]);
@@ -124,10 +139,11 @@ public class Chart {
                         if (j < namemaxLength - name.length()) {
                             System.out.print(SPACE);
                         } else if (j < namemaxLength) {
+                            //打印name
                             System.out.print(name.charAt(j - (namemaxLength - name.length())));
                         } else {
                             //打印柱
-                            if ((j - namemaxLength) <= Integer.parseInt(data[i].split(SPACE)[1])) {
+                            if ((j - namemaxLength) <= (Integer.parseInt(data[i].split(SPACE)[1]) * 20 / maxValue)) {
                                 System.out.print(PILLAR);
                             } else {
                                 System.out.print(SPACE);
